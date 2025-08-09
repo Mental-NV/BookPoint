@@ -37,6 +37,8 @@ Apply schema:
 sqlcmd -S 127.0.0.1,1433 -U sa -P Your_strong_password123 -d master -i DB_SCHEMA.sql
 ```
 
+> Note: `DB_SCHEMA.sql` is a template for design-time reference only and may be incomplete. Once the backend exists, the authoritative schema will be provided via EF Core migrations. Prefer running migrations over applying this template directly.
+
 ## Projects
 - `src/Api` — ASP.NET Core API
 - `src/WebPublic` — React SPA (public booking)
@@ -123,6 +125,8 @@ If using EF Core:
 dotnet ef migrations add Init --project src/Infrastructure --startup-project src/Api
 dotnet ef database update --project src/Infrastructure --startup-project src/Api
 ```
+
+The EF Core migrations are the source of truth. Use them to create and update the database instead of the template SQL file.
 
 ## Troubleshooting
 - **SQL login failed** → ensure SA password meets complexity; add `TrustServerCertificate=True`.

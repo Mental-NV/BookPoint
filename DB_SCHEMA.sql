@@ -1,10 +1,23 @@
--- Barber Booking Platform — Phase 0
--- Azure SQL / SQL Server compatible schema
--- Includes: multi-tenancy, booking, deposits (mock), notifications (mock),
--- admin users (Google OIDC mapping), and audit logs.
--- Notes:
---  - Times are stored in UTC using DATETIME2
---  - RowVersion used for optimistic concurrency on mutable tables
+/*
+=====================================================================
+    TEMPLATE ONLY — NON-AUTHORITATIVE (Phase 0)
+
+    This SQL file is an illustrative, skeletal template meant to convey
+    the target tables, indexes, and naming conventions. It is intentionally
+    incomplete and may not compile as-is.
+
+    Source of truth for the database schema will be EF Core Code‑First
+    Migrations generated from the backend project. When the backend is
+    implemented, prefer applying migrations or using the generated SQL
+    script from EF over this file.
+
+    Use cases for this file:
+        - Documentation and quick reference during design
+        - Optional scratch DB scaffolding during very early prototyping
+
+    Do NOT use in production. Replace with EF migrations outputs once available.
+=====================================================================
+*/
 
 ------------------------------------------------------------
 -- 0) Safety

@@ -31,9 +31,9 @@ Platform: **Web-only** on **Azure**. Admin auth: **Google** (OIDC). Public flow 
 
 ## 2) Target Stack
 
-- **Frontend**: React + TypeScript, Vite, React Router, React Query, Zustand/Redux, Tailwind or MUI.
-- **Backend**: ASP.NET Core 8 (Minimal APIs/Controllers), MediatR, EF Core, FluentValidation, AutoMapper.
-- **Data**: Azure SQL (General Purpose tier), Azure Cache for Redis (Standard/Premium), Azure Storage (Blobs for CSV/ICS).
+- **Frontend**: React + TypeScript, Vite, React Router, React Query, Redux, Tailwind.
+- **Backend**: ASP.NET Core 8 (Controllers), MediatR, EF Core, FluentValidation.
+- **Data**: Azure SQL (General Purpose tier), Azure Cache for Redis (Standard), Azure Storage (Blobs for CSV/ICS).
 - **Jobs**: Azure Functions (timer jobs for reminders & housekeeping).
 - **Auth**: Google OpenID Connect for Admin. JWT/cookie issued by API for session.
 - **Observability**: Application Insights + Log Analytics.
