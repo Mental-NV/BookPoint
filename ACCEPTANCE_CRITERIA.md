@@ -1,6 +1,6 @@
 # ACCEPTANCE_CRITERIA.md
 
-Barber Booking Platform — **Phase 0**  
+Booking Platform — **Phase 0**  
 Scope: Public booking, Admin calendar, Mock SMS, Basic analytics, Google auth.
 
 ---
@@ -11,7 +11,7 @@ Scope: Public booking, Admin calendar, Mock SMS, Basic analytics, Google auth.
 - **Performance**: Meets NFRs — `/public/availability` p95 ≤ 300ms (warm cache); admin calendar load p95 ≤ 1.5s.
 - **Security**: Input validation, authz checks (roles), rate limiting on `/public/*`.
 - **Observability**: Logs, traces, and metrics for key events; App Insights dashboards updated.
-- **Docs**: API.yaml updated, CHANGELOG entry, user-facing copy strings finalized.
+- **Docs**: API documentation updated as part of implementation (code-first), CHANGELOG entry, user-facing copy strings finalized.
 - **Accessibility**: Keyboard navigation and labels for forms and modals; color-contrast pass.
 - **i18n readiness**: Strings externalized; RU default.
 - **Operational**: Feature flags for mock providers; config via env vars; health endpoints green.
@@ -83,7 +83,7 @@ Scope: Public booking, Admin calendar, Mock SMS, Basic analytics, Google auth.
 
 ---
 
-### US-006 — Client cancels with booking code
+### US-005 — Client cancels with booking code
 **Acceptance Criteria**
 - Providing a valid **booking code** for a **future** appointment sets status to **Canceled** and frees the slot.
 - A mock SMS notification is queued.
@@ -97,18 +97,7 @@ Scope: Public booking, Admin calendar, Mock SMS, Basic analytics, Google auth.
 
 ## E2. Admin Calendar & Management
 
-### US-007 — Google sign-in & roles
-**Acceptance Criteria**
-- Admin can sign in via Google and is recognized with the correct **role** (Owner/Manager/Receptionist/Barber).
-- Unauthorized users are denied with 401/403.
-- Session/JWT expires and refreshes appropriately; logout works.
-
-**DoD**
-- OIDC configured; role claims injected; protected routes enforced; integration tests with test identity.
-
----
-
-### US-008 — Calendar views
+### US-006 — Calendar views
 **Acceptance Criteria**
 - Day and Week views display appointments by staff, color-coded by status.
 - Initial load (typical week) p95 ≤ 1.5s.
@@ -119,7 +108,7 @@ Scope: Public booking, Admin calendar, Mock SMS, Basic analytics, Google auth.
 
 ---
 
-### US-009 — Create appointment (admin)
+### US-007 — Create appointment (admin)
 **Acceptance Criteria**
 - Dragging on a free time range opens a modal to select service/client.
 - On save, appointment is created without double-booking; conflicts return **409**.
@@ -130,7 +119,7 @@ Scope: Public booking, Admin calendar, Mock SMS, Basic analytics, Google auth.
 
 ---
 
-### US-010 — Reschedule & cancel (admin)
+### US-008 — Reschedule & cancel (admin)
 **Acceptance Criteria**
 - Drag-and-drop move updates the appointment if conflict-free; otherwise shows error.
 - Cancel updates status and frees the slot.
@@ -142,7 +131,7 @@ Scope: Public booking, Admin calendar, Mock SMS, Basic analytics, Google auth.
 
 ---
 
-### US-011 — Manage services and staff
+### US-009 — Manage services and staff
 **Acceptance Criteria**
 - Admin can **CRUD** services (duration, price) and **CRUD** staff (skills, hours, breaks, vacations).
 - Validation prevents zero/negative durations and invalid configs.
@@ -154,11 +143,7 @@ Scope: Public booking, Admin calendar, Mock SMS, Basic analytics, Google auth.
 
 ## E3. Notifications (Mock SMS)
 
----
-
-## E4. Notifications (Mock SMS)
-
-### US-014 — Confirmation & reminder logs
+### US-012 — Confirmation & reminder logs
 **Acceptance Criteria**
 - On appointment confirmation, system inserts a **Notification** row with Channel `sms`, Template `booking_confirmed`, Status `queued` then `sent`.
 - Reminder entries are created at **T-24h** and **T-2h** by a timer job and marked as sent.
@@ -168,7 +153,7 @@ Scope: Public booking, Admin calendar, Mock SMS, Basic analytics, Google auth.
 
 ---
 
-### US-015 — Outbox UI
+### US-013 — Outbox UI
 **Acceptance Criteria**
 - Admin can view latest mock messages with timestamp, channel, template, and payload preview.
 - Paging or infinite scroll supported for ≥ 1000 messages.
@@ -180,7 +165,7 @@ Scope: Public booking, Admin calendar, Mock SMS, Basic analytics, Google auth.
 
 ## E4. Basic Analytics
 
-### US-016 — KPIs dashboard
+### US-014 — KPIs dashboard
 **Acceptance Criteria**
 - Given a date range (and optional branch), the dashboard displays:
   - **Total appointments**
@@ -194,7 +179,7 @@ Scope: Public booking, Admin calendar, Mock SMS, Basic analytics, Google auth.
 
 ---
 
-### US-017 — CSV export
+### US-015 — CSV export
 **Acceptance Criteria**
 - Admin can export appointments to CSV within the selected date range.
 - File opens in Excel; UTF-8 with BOM; includes header row.
@@ -206,7 +191,16 @@ Scope: Public booking, Admin calendar, Mock SMS, Basic analytics, Google auth.
 
 ## E5. Auth & Security
 
-### US-018 — Access control & rate limiting
+### US-010 — Google sign-in & roles
+**Acceptance Criteria**
+- Admin can sign in via Google and is recognized with the correct **role** (Owner/Manager/Receptionist/Staff).
+- Unauthorized users are denied with 401/403.
+- Session/JWT expires and refreshes appropriately; logout works.
+
+**DoD**
+- OIDC configured; role claims injected; protected routes enforced; integration tests with test identity.
+
+### US-011 — Access control & rate limiting
 **Acceptance Criteria**
 - Admin endpoints require valid JWT/session with role authorization.
 - Public endpoints `/public/*` are throttled; excessive calls return **429** with `Retry-After` header.
@@ -219,7 +213,7 @@ Scope: Public booking, Admin calendar, Mock SMS, Basic analytics, Google auth.
 
 ## E6. Observability & Ops
 
-### US-019 — Tracing & dashboards
+### US-016 — Tracing & dashboards
 **Acceptance Criteria**
 - Key events (`BookingConfirmed`, `SmsQueuedMock`) appear in App Insights with correlation IDs.
 - Dashboards show p95 latency, error rate, RPS, and booking funnel.
@@ -229,7 +223,7 @@ Scope: Public booking, Admin calendar, Mock SMS, Basic analytics, Google auth.
 
 ---
 
-### US-020 — Alerts
+### US-017 — Alerts
 **Acceptance Criteria**
 - Alerts fire on:
   - Error rate spike (>2% for 10 min).

@@ -32,7 +32,7 @@ Run:
 docker compose up -d
 ```
 
-> Note: `DB_SCHEMA.sql` is a placeholder for design-time only and not authoritative. Once the backend exists, use EF Core migrations to create/update the database.
+> Note: Use EF Core migrations to create/update the database once the backend exists; no separate SQL file is maintained at this stage.
 
 ## Projects
 - `src/Domain` — Entities, value objects, domain services (no external deps)
@@ -52,12 +52,12 @@ Create `/.env.local` files or use `dotnet user-secrets` for API:
 **API**
 ```
 ASPNETCORE_ENVIRONMENT=Development
-ConnectionStrings__Default=Server=localhost,1433;Database=Barber;User Id=sa;Password=Your_strong_password123;TrustServerCertificate=True;
+ConnectionStrings__Default=Server=localhost,1433;Database=Booking;User Id=sa;Password=Your_strong_password123;TrustServerCertificate=True;
 Redis__Connection=localhost:6379
 Auth__Google__ClientId=YOUR_GOOGLE_CLIENT_ID
 Auth__Google__ClientSecret=YOUR_GOOGLE_CLIENT_SECRET
 Jwt__Issuer=http://localhost
-Jwt__Audience=barber-admin
+Jwt__Audience=booking-admin
 Jwt__SigningKey=dev-secret-signing-key-change
 Features__UseMockSms=true
 Booking__HoldTtlSeconds=120

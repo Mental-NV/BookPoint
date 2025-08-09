@@ -1,6 +1,6 @@
 # ARCHITECTURE.md
 
-## Barber Booking Platform — Phase 0 Architecture
+## Booking Platform — Phase 0 Architecture
 Scope: **Public booking**, **Admin calendar**, **Mock SMS**, **Basic analytics**.  
 Platform: **Web-only** on **Azure**. Admin auth: **Google** (OIDC). Public flow is anonymous.
 
@@ -81,7 +81,7 @@ Platform: **Web-only** on **Azure**. Admin auth: **Google** (OIDC). Public flow 
 
 ## 4) Data Model (Phase 0, concise)
 
-Core tables (see `DB_SCHEMA.sql` for full DDL):
+Core tables (to be defined via EF Core migrations):
 - `Tenants`, `Branches`
 - `Services` (duration, price)
 - `Staff`, `StaffSkills`, `Clients`
@@ -162,7 +162,7 @@ Admin (Google auth):
 Mock utility:
 - `POST /mock/sms/send`
 
-See `API.yaml` for OpenAPI details.
+Detailed OpenAPI contracts will be produced alongside implementation (code-first generation) and committed when available.
 
 ---
 
@@ -184,7 +184,7 @@ See `API.yaml` for OpenAPI details.
 ## 9) Security & Auth
 
 - **Admin** only via **Google OIDC**. API issues JWT/cookie with roles.
-- **RBAC** roles: Owner, Manager, Receptionist, Barber.
+- **RBAC** roles: Owner, Manager, Receptionist, Staff.
 - **Rate limiting**: IP throttle on `/public/*` + circuit breakers for provider calls.
 - **CORS**: allow Admin/Public SPAs origins only.
 - **Validation**: FluentValidation; `ProblemDetails` responses on errors.

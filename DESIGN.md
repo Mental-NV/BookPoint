@@ -1,10 +1,10 @@
 # DESIGN.md
 
-## Product: Barber Booking Platform — **Phase 0**
+## Product: Booking Platform — **Phase 0**
 
 Scope limited to: **core booking**, **admin calendar**, **mocked SMS**, **basic analytics**.  
 Platform: **Web-only**, hosted fully on **Azure**.  
-Auth: **Google Sign-In** for back office (admins/barbers). Public booking is anonymous.
+Auth: **Google Sign-In** for back office (admins/staff). Public booking is anonymous.
 
 ---
 
@@ -29,7 +29,7 @@ Auth: **Google Sign-In** for back office (admins/barbers). Public booking is ano
 
 - **Client (Guest):** books from public site; no login.
 - **Receptionist/Administrator:** manages bookings; phone/walk-ins.
-- **Barber:** sees own schedule; minor edits.
+- **Staff member:** sees own schedule; minor edits.
 - **Owner/Manager:** configures catalog/hours; sees analytics.
 
 ---
@@ -64,7 +64,7 @@ Auth: **Google Sign-In** for back office (admins/barbers). Public booking is ano
    - Tiles: appointments, occupancy, cancellations.
    - Filters: branch, date range; CSV export.
 
-7. **UC-007: Admin/Barber login with Google**
+7. **UC-007: Admin/Staff login with Google**
    - First owner invites others; assign roles.
 
 ---
