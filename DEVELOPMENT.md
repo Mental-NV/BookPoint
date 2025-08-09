@@ -40,10 +40,15 @@ sqlcmd -S 127.0.0.1,1433 -U sa -P Your_strong_password123 -d master -i DB_SCHEMA
 > Note: `DB_SCHEMA.sql` is a template for design-time reference only and may be incomplete. Once the backend exists, the authoritative schema will be provided via EF Core migrations. Prefer running migrations over applying this template directly.
 
 ## Projects
-- `src/Api` — ASP.NET Core API
+- `src/Domain` — Entities, value objects, domain services (no external deps)
+- `src/Application` — Use cases (MediatR), DTOs, validators, policies
+- `src/Infrastructure` — EF Core, repositories, providers (SQL, Redis, Storage, mocks)
+- `src/Api` — ASP.NET Core API (controllers, DI, auth, middleware)
 - `src/WebPublic` — React SPA (public booking)
 - `src/WebAdmin` — React SPA (admin)
-- `tests/*` — unit/integration/E2E
+- `tests/Unit` — unit tests (Domain/Application)
+- `tests/Integration` — API + Infrastructure integration tests
+- `tests/E2E` — end-to-end tests (Playwright/Cypress)
 
 ## Environment Variables
 

@@ -46,17 +46,24 @@ Platform: **Web-only** on **Azure**. Admin auth: **Google** (OIDC). Public flow 
 **Projects (suggested layout)**
 ```
 /src
-  /Domain           -- Entities, value objects, invariants, domain services
-  /Application      -- Commands/Queries (MediatR), DTOs, validators, policies
-  /Infrastructure   -- EF Core, Redis, provider implementations, migrations
-  /Api              -- ASP.NET Core entry point (controllers/minimal APIs), DI, auth
-  /WebPublic        -- React SPA (client booking)
-  /WebAdmin         -- React SPA (admin calendar & settings)
+  /Domain            -- Entities, value objects, invariants, domain services
+  /Application       -- Use cases (MediatR), DTOs, validators, policies
+  /Infrastructure    -- EF Core, repositories, providers (SQL, Redis, Storage, SMS/Payments mocks)
+  /Api               -- ASP.NET Core API (controllers, DI wiring, auth, middleware)
+  /WebPublic         -- React SPA (public booking)
+  /WebAdmin          -- React SPA (admin calendar & settings)
 /tests
-  /Unit
-  /Integration
-  /E2E
+  /Unit              -- Domain/Application unit tests
+  /Integration       -- API + Infrastructure integration tests
+  /E2E               -- Playwright/Cypress end-to-end tests
 ```
+
+**Dependency rules**
+- Domain has no dependencies.
+- Application depends only on Domain and abstractions.
+- Infrastructure depends on Application and Domain to provide implementations.
+- Api depends on Application and Infrastructure for runtime wiring.
+- Web SPAs call Api over HTTP; no direct references to backend projects.
 
 **Domain submodules**
 - **Catalog**: Services (+ deposit policy).
