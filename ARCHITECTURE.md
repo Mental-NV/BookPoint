@@ -1,7 +1,7 @@
 # ARCHITECTURE.md
 
 ## Barber Booking Platform — Phase 0 Architecture
-Scope: **Public booking**, **Admin calendar**, **Mock SMS**, **Mock deposits**, **Basic analytics**.  
+Scope: **Public booking**, **Admin calendar**, **Mock SMS**, **Basic analytics**.  
 Platform: **Web-only** on **Azure**. Admin auth: **Google** (OIDC). Public flow is anonymous.
 
 ---
@@ -24,7 +24,7 @@ Platform: **Web-only** on **Azure**. Admin auth: **Google** (OIDC). Public flow 
 **Key decisions**
 - Single **ASP.NET Core API** for both SPAs. No separate gateway in Phase 0.
 - **Azure SQL** is the system of record; **Redis** used for availability cache & slot locks.
-- **Providers** (SMS, Payments) behind interfaces; **mock** implementations in Phase 0.
+- **Providers** (SMS) behind interfaces; **mock** implementations in Phase 0.
 - Clean, modular solution with clear **domain boundaries** and **CQRS-light** in the application layer.
 
 ---
@@ -48,7 +48,7 @@ Platform: **Web-only** on **Azure**. Admin auth: **Google** (OIDC). Public flow 
 /src
   /Domain            -- Entities, value objects, invariants, domain services
   /Application       -- Use cases (MediatR), DTOs, validators, policies
-  /Infrastructure    -- EF Core, repositories, providers (SQL, Redis, Storage, SMS/Payments mocks)
+  /Infrastructure    -- EF Core, repositories, providers (SQL, Redis, Storage, SMS mocks)
   /Api               -- ASP.NET Core API (controllers, DI wiring, auth, middleware)
   /WebPublic         -- React SPA (public booking)
   /WebAdmin          -- React SPA (admin calendar & settings)
@@ -66,17 +66,16 @@ Platform: **Web-only** on **Azure**. Admin auth: **Google** (OIDC). Public flow 
 - Web SPAs call Api over HTTP; no direct references to backend projects.
 
 **Domain submodules**
-- **Catalog**: Services (+ deposit policy).
+- **Catalog**: Services.
 - **Scheduling**: Staff, work patterns (weekly + exceptions).
 - **Clients**: Simple CRM (name/phone/email/notes).
 - **Booking**: Availability, holds, create/confirm/cancel, ICS export.
-- **Payments**: `IPaymentGateway` abstraction (mock now).
 - **Notifications**: `ISmsSender` abstraction (mock now), reminder scheduler.
 - **Analytics**: KPI queries (may include simple rollups later).
 
 **Application layer patterns**
 - **MediatR** commands/queries, **FluentValidation** for input DTOs.
-- **Policies/Rules** encapsulated as services (e.g., deposit calculation, buffer policy).
+- **Policies/Rules** encapsulated as services (e.g., buffer policy).
 
 ---
 
@@ -84,10 +83,9 @@ Platform: **Web-only** on **Azure**. Admin auth: **Google** (OIDC). Public flow 
 
 Core tables (see `DB_SCHEMA.sql` for full DDL):
 - `Tenants`, `Branches`
-- `Services` (duration, price, deposit rules)
+- `Services` (duration, price)
 - `Staff`, `StaffSkills`, `Clients`
-- `Appointments` (Status: Pending|Confirmed|Canceled|NoShow; DepositStatus)
-- `DepositTransactions` (Provider='Mock' in Phase 0)
+- `Appointments` (Status: Pending|Confirmed|Canceled|NoShow)
 - `Notifications` (Channel sms|email; Status queued|sent|failed)
 - `AuditLogs`
 
@@ -119,8 +117,7 @@ Core tables (see `DB_SCHEMA.sql` for full DDL):
 **Hold & confirm flow**
 - Client hits `/public/booking/hold` → lock acquired (120s).
 - `/public/booking/confirm` validates & persists `Appointment`.
-- If deposit required → create mock payment intent → confirm on callback.
-- On success → set `Status=Confirmed`, `DepositStatus=Captured`, release lock.
+- On success → set `Status=Confirmed`, release lock.
 
 Idempotency: `holdId` is the idempotency key; duplicate confirms are no-ops.
 
@@ -132,17 +129,10 @@ Idempotency: `holdId` is the idempotency key; duplicate confirms are no-ops.
 public interface ISmsSender {
   Task SendAsync(string phone, string templateKey, object model, CancellationToken ct);
 }
-
-public interface IPaymentGateway {
-  Task<CreateIntentResult> CreateIntentAsync(Guid appointmentId, Money amount, CancellationToken ct);
-  Task<PaymentResult> CaptureAsync(string intentId, CancellationToken ct);
-  Task<PaymentResult> RefundAsync(string intentId, CancellationToken ct);
-}
 ```
 
 **Phase 0 implementations**
 - `MockSmsSender`: persists to `Notifications`, logs to App Insights, marks `queued` → `sent`.
-- `MockPaymentGateway`: creates a fake `intentId` + `/mock/pay/{intentId}`; SPA Approve/Fail triggers callback; writes `DepositTransactions` and updates `Appointments`.
 
 Swap for real providers by replacing DI registrations; no domain changes.
 
@@ -171,8 +161,6 @@ Admin (Google auth):
 
 Mock utility:
 - `POST /mock/sms/send`
-- `POST /mock/payments/create-intent`
-- `POST /mock/payments/callback`
 
 See `API.yaml` for OpenAPI details.
 
@@ -181,14 +169,14 @@ See `API.yaml` for OpenAPI details.
 ## 8) Frontend Architecture
 
 **WebPublic (client booking)**
-- **Pages**: Select Service → Select Staff → Select Time → Contact & Confirm → (Mock payment) → Confirmation.
+- **Pages**: Select Service → Select Staff → Select Time → Contact & Confirm → Confirmation.
 - **State**: React Query for server state; local state for wizard steps.
 - **UX**: show “(mock) SMS sent” toast; ICS file download; clear error for conflicts.
 
 **WebAdmin (calendar)**
 - **Views**: Day/Week calendar with DnD (create/move/resize).
 - **Panels**: Appointment details panel (status, notes, mock send reminder).
-- **Management**: Services CRUD, Staff CRUD, Settings, Mock Outbox, Payment Events.
+- **Management**: Services CRUD, Staff CRUD, Settings, Mock Outbox.
 - **Auth**: Google Sign-In; backend session/JWT; role-based routes.
 
 ---
@@ -234,8 +222,8 @@ See `API.yaml` for OpenAPI details.
 
 **Tracing & logs**
 - Correlation IDs per request.
-- Custom events: `BookingHold`, `BookingConfirmed`, `DepositCapturedMock`, `SmsQueuedMock`, `SmsSentMock`.
-- Metrics: availability cache hit ratio, 409 conflicts, hold timeouts, deposit success rate.
+- Custom events: `BookingHold`, `BookingConfirmed`, `SmsQueuedMock`, `SmsSentMock`.
+- Metrics: availability cache hit ratio, 409 conflicts, hold timeouts.
 
 **Dashboards**
 - API p95 latency, error rate, RPS.
@@ -264,7 +252,6 @@ See `API.yaml` for OpenAPI details.
 
 ```
 Features__UseMockSms=true
-Features__UseMockPayments=true
 Booking__HoldTtlSeconds=120
 Booking__SlotGridMinutes=15
 Auth__Google__ClientId=...
@@ -293,15 +280,12 @@ Feature flags allow seamless switch to real providers later.
 
 ## 15) Sequence Flows
 
-**Public booking with deposit (mock)**
+**Public booking**
 ```
 Client → GET /public/availability
 Client → POST /public/booking/hold   -- lock in Redis
 Client → POST /public/booking/confirm
- API  → Create Appointment(Pending, Required) + DepositIntent(Mock)
-Client → (SPA) /mock/pay/{intent} → Approve
- SPA  → POST /mock/payments/callback(succeeded)
- API  → Update Appointment(Confirmed, Captured), release lock, enqueue mock SMS
+ API  → Create Appointment(Confirmed), release lock, enqueue mock SMS, provide ICS
 ```
 
 **Admin reschedule**
@@ -324,7 +308,7 @@ Admin DnD → PATCH /admin/appointments/{id}
 ## 17) Risks & Mitigations (Phase 0)
 
 - **Double-booking**: Redis `SET NX` locks + transactional create; integration tests for races.
-- **Mock drift from real providers**: contracts mirror real-world (intent/capture/refund), with webhook-style callbacks.
+- **Mock drift from SMS provider**: contracts mirror real-world (template + payload), with durable outbox.
 - **Complex work patterns**: keep JSON pattern simple; validate on save; advanced rules deferred to later phases.
 
 ---
@@ -333,7 +317,7 @@ Admin DnD → PATCH /admin/appointments/{id}
 
 - **ADR-001**: Use Clean Architecture with CQRS-light (MediatR) — maintainable & testable.
 - **ADR-002**: Use Redis for holds & cache — prevents double-booking; fast availability.
-- **ADR-003**: Provider abstractions for SMS/Payments — enable easy swap to real vendors later.
+- **ADR-003**: Provider abstractions for SMS — enable easy swap to real vendors later.
 - **ADR-004**: Single API, no gateway in Phase 0 — simpler operations; revisit later if needed.
 - **ADR-005**: Google-only admin auth — minimal setup; add providers later if needed.
 

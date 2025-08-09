@@ -2,7 +2,7 @@
 
 ## Product: Barber Booking Platform — **Phase 0**
 
-Scope limited to: **core booking**, **admin calendar**, **mocked SMS**, **mocked deposits/payment**, **basic analytics**.  
+Scope limited to: **core booking**, **admin calendar**, **mocked SMS**, **basic analytics**.  
 Platform: **Web-only**, hosted fully on **Azure**.  
 Auth: **Google Sign-In** for back office (admins/barbers). Public booking is anonymous.
 
@@ -13,9 +13,8 @@ Auth: **Google Sign-In** for back office (admins/barbers). Public booking is ano
 ### Goals
 - Frictionless **online booking** without admin help.
 - Reliable **admin calendar** with conflict prevention & DnD.
-- **Deposits** supported via **mock payment** now; swappable later.
 - **Notifications** shown as **mock SMS** now; swappable later.
-- **Basic analytics** (occupancy, appointments, deposits).
+- **Basic analytics** (occupancy, appointments).
 - Horizontally **scalable** & observable on Azure.
 
 ### Success Criteria (Phase 0)
@@ -39,9 +38,9 @@ Auth: **Google Sign-In** for back office (admins/barbers). Public booking is ano
 
 1. **UC-001: Client books online**
    - **Trigger:** Client opens public site.
-   - **Flow:** Select branch → service → (optional) staff → time → contact → (if required) deposit (mock) → confirmation + ICS.
+   - **Flow:** Select branch → service → (optional) staff → time → contact → confirmation + ICS.
    - **Post:** Show “(mock) SMS sent”.
-   - **Failure:** Lock timeout / mock payment failed → slot released.
+   - **Failure:** Lock timeout → slot released.
 
 2. **UC-002: Client verifies phone (mock)**
    - **Trigger:** Enter phone during booking.
@@ -49,7 +48,7 @@ Auth: **Google Sign-In** for back office (admins/barbers). Public booking is ano
    - **Alt:** Wrong/expired code → retry.
 
 3. **UC-003: Admin creates booking (walk-in/phone)**
-   - **Flow:** Admin DnD on calendar → modal with client + service → (optional) deposit link → save.
+   - **Flow:** Admin DnD on calendar → modal with client + service → save.
    - **Validations:** Staff skills, time conflicts, buffers.
 
 4. **UC-004: Admin reschedules or cancels**
@@ -57,12 +56,12 @@ Auth: **Google Sign-In** for back office (admins/barbers). Public booking is ano
    - **Cancel:** Mark canceled → release slot → (mock) notify.
 
 5. **UC-005: Configure catalog/staff/hours**
-   - Services (duration, price, deposit rule).
+   - Services (duration, price).
    - Staff (skills/hours/breaks/vacations).
    - Branch hours; booking buffers; last‑minute cutoff.
 
 6. **UC-006: View analytics**
-   - Tiles: appointments, occupancy, cancellations, deposits (mock).
+   - Tiles: appointments, occupancy, cancellations.
    - Filters: branch, date range; CSV export.
 
 7. **UC-007: Admin/Barber login with Google**
@@ -77,23 +76,21 @@ Auth: **Google Sign-In** for back office (admins/barbers). Public booking is ano
 - **Availability** by service/staff/day; 5–15 min grid alignment.
 - **Slot hold** on confirm step (TTL 120s) with Redis; release on timeout.
 - **Contact**: name, phone, email (optional); phone verification (mock).
-- **Deposits** (per service): fixed or %; **mock checkout** with Approve/Fail.
 - Confirmation screen with booking code + **ICS** file; (mock) SMS.
 
 ### Admin / Back Office
 - **Calendar**: Day/Week, DnD create/move/resize; conflict detection; filters by staff/service.
 - **Clients**: quick create; notes.
-- **Services**: CRUD; duration, price, deposit rules.
+- **Services**: CRUD; duration, price.
 - **Staff**: CRUD; skills; working hours, breaks, vacations.
 - **Settings**: buffers, cutoffs, mock toggles.
-- **Mock consoles**: “SMS Outbox” & “Payment Events”.
+- **Mock console**: “SMS Outbox”.
 
 ### Notifications (Mocked)
 - Confirmation/reschedule/reminder **queued** to `Notifications` table and visible in UI.
 - Timer job can “send” reminders by flipping status to `sent`.
 
-### Basic Analytics
-- KPIs: **Occupancy %**, **Total appointments**, **Cancellation rate**, **Deposits collected (mock)**, **Lead time**.
+- KPIs: **Occupancy %**, **Total appointments**, **Cancellation rate**, **Lead time**.
 - Charts: Appointments by day, Occupancy by staff, Service mix.
 - CSV export.
 
@@ -119,24 +116,22 @@ Auth: **Google Sign-In** for back office (admins/barbers). Public booking is ano
 - Staff must have skill for service.
 - No double-booking per staff; resource management beyond staff is **out of scope**.
 - Holds expire automatically (120s default).
-- Deposit state machine: `NotRequired → Required → Captured | Failed | Refunded`.
 - Appointment states: `Pending → Confirmed | Canceled | NoShow (manual)`.
 
 ---
 
 ## 7) Data Definitions (key)
 
-- **Services**: `DurationMin`, `BasePrice`, `RequiresDeposit`, `DepositType (%|fixed)`, `DepositValue`.
+- **Services**: `DurationMin`, `BasePrice`.
 - **Staff**: `Skills[]` (service ids), `WorkPattern` (weekly schedule + exceptions).
-- **Appointments**: `StartUtc`, `EndUtc`, `Status`, `DepositStatus`, `Source(web|admin)`.
-- **DepositTransactions**: `Amount`, `Status(succeeded|failed|refunded)`, `Provider(Mock)`.
+- **Appointments**: `StartUtc`, `EndUtc`, `Status`, `Source(web|admin)`.
 - **Notifications**: `Channel(sms|email)`, `Template`, `Payload`, `Status`.
 
 ---
 
 ## 8) Testing Strategy (summary)
 
-- **Unit:** availability, lock/confirm, deposit transitions (mock).
+- **Unit:** availability, lock/confirm.
 - **Integration:** booking flow, admin DnD, cancellations.
 - **E2E:** public wizard + admin calendar happy paths; conflict scenario.
 - **Load:** Availability @100 RPS p95<300ms; Calendar @30 RPS p95<1.5s.
@@ -148,5 +143,5 @@ Auth: **Google Sign-In** for back office (admins/barbers). Public booking is ano
 
 - **M1 Foundations:** infra + auth + CRUD (tenant/branch/staff/services).
 - **M2 Booking Engine:** availability + holds + public wizard.
-- **M3 Deposits & Mocks:** fake payment + mock SMS + reminders.
+- **M3 Notifications & Reminders:** mock SMS + reminders.
 - **M4 Analytics & Polish:** KPIs, exports, dashboards, E2E & load tests.

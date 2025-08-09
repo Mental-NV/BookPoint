@@ -1,7 +1,7 @@
 # ACCEPTANCE_CRITERIA.md
 
 Barber Booking Platform — **Phase 0**  
-Scope: Public booking, Admin calendar, Mock deposits, Mock SMS, Basic analytics, Google auth.
+Scope: Public booking, Admin calendar, Mock SMS, Basic analytics, Google auth.
 
 ---
 
@@ -21,11 +21,10 @@ Scope: Public booking, Admin calendar, Mock deposits, Mock SMS, Basic analytics,
 ## Epics Overview
 - **E1. Public Booking**
 - **E2. Admin Calendar & Management**
-- **E3. Deposits (Mock Payment)**
-- **E4. Notifications (Mock SMS)**
-- **E5. Basic Analytics**
-- **E6. Auth & Security (Google for Admin)**
-- **E7. Observability & Ops**
+- **E3. Notifications (Mock SMS)**
+- **E4. Basic Analytics**
+- **E5. Auth & Security (Google for Admin)**
+- **E6. Observability & Ops**
 
 ---
 
@@ -34,7 +33,7 @@ Scope: Public booking, Admin calendar, Mock deposits, Mock SMS, Basic analytics,
 ### US-001 — Browse branches & services
 **Acceptance Criteria**
 - When I open the public site and provide a tenant, I can see a list of **branches** with `name`, `address`.
-- Selecting a branch shows **services** with `name`, `duration`, `price`, and an indicator if **deposit** is required.
+- Selecting a branch shows **services** with `name`, `duration`, and `price`.
 - Services reflect branch availability (only those offered in the branch).
 
 **DoD**
@@ -68,27 +67,19 @@ Scope: Public booking, Admin calendar, Mock deposits, Mock SMS, Basic analytics,
 
 ---
 
-### US-004 — Enter contact & confirm (no deposit)
+### US-004 — Enter contact & confirm
 **Acceptance Criteria**
 - Required fields: `name`, `phone`; email optional.
-- If the service **does not** require a deposit, confirm returns **`Appointment.Confirmed`** with a **booking code** and **ICS** link.
+- Confirm returns **`Appointment.Confirmed`** with a **booking code** and **ICS** link.
 - Phone verification is **mocked**: user can request a code; system returns a visible code for demo/testing.
 
 **DoD**
-- API `POST /public/booking/confirm` (no deposit path) + `POST /public/booking/verify-phone` (mock) implemented.
+- API `POST /public/booking/confirm` + `POST /public/booking/verify-phone` (mock) implemented.
 - ICS generation validated; E2E test asserts ICS download exists.
 
 ---
 
-### US-005 — Confirm with deposit (mock)
-**Acceptance Criteria**
-- If service requires a deposit, confirm returns a **deposit intent** with **checkoutUrl**.
-- Approving the mock payment changes `Appointment.Status → Confirmed` and `DepositStatus → Captured`.
-- Failing/canceling mock payment releases hold and shows clear error message on return.
-
-**DoD**
-- `POST /mock/payments/create-intent` + `/mock/payments/callback` implemented.
-- E2E covers Approve/Fail branches; idempotency verified with repeated callbacks.
+### (Removed) Deposit-related stories are out of scope for Phase 0.
 
 ---
 
@@ -153,32 +144,15 @@ Scope: Public booking, Admin calendar, Mock deposits, Mock SMS, Basic analytics,
 
 ### US-011 — Manage services and staff
 **Acceptance Criteria**
-- Admin can **CRUD** services (duration, price, deposit rule) and **CRUD** staff (skills, hours, breaks, vacations).
-- Validation prevents zero/negative durations and invalid deposit configs.
+- Admin can **CRUD** services (duration, price) and **CRUD** staff (skills, hours, breaks, vacations).
+- Validation prevents zero/negative durations and invalid configs.
 
 **DoD**
 - APIs `/admin/services` and `/admin/staff` implemented; form validations; unit tests for validators.
 
 ---
 
-## E3. Deposits (Mock Payment)
-
-### US-012 — Deposit calculation
-**Acceptance Criteria**
-- Deposit amount is computed correctly (fixed/percent of base price) with correct rounding to **2 decimals**.
-
-**DoD**
-- Unit tests for deposit calculator (edge: 0, fractions, large amounts).
-
----
-
-### US-013 — Mock payment lifecycle
-**Acceptance Criteria**
-- Create intent → Approve/Fail updates `DepositTransactions` and appointment deposit status.
-- Replayed callbacks are **idempotent** (no duplicates).
-
-**DoD**
-- Integration tests simulate duplicate callbacks; data remains consistent.
+## E3. Notifications (Mock SMS)
 
 ---
 
@@ -204,7 +178,7 @@ Scope: Public booking, Admin calendar, Mock deposits, Mock SMS, Basic analytics,
 
 ---
 
-## E5. Basic Analytics
+## E4. Basic Analytics
 
 ### US-016 — KPIs dashboard
 **Acceptance Criteria**
@@ -212,7 +186,6 @@ Scope: Public booking, Admin calendar, Mock deposits, Mock SMS, Basic analytics,
   - **Total appointments**
   - **Cancellations** and **cancellation rate**
   - **Occupancy %** (Booked minutes / Available minutes)
-  - **Deposits collected (mock)**
   - **Average lead time (hours)**
 - Results consistent with database facts (±1 during concurrent updates).
 
@@ -231,7 +204,7 @@ Scope: Public booking, Admin calendar, Mock deposits, Mock SMS, Basic analytics,
 
 ---
 
-## E6. Auth & Security
+## E5. Auth & Security
 
 ### US-018 — Access control & rate limiting
 **Acceptance Criteria**
@@ -244,11 +217,11 @@ Scope: Public booking, Admin calendar, Mock deposits, Mock SMS, Basic analytics,
 
 ---
 
-## E7. Observability & Ops
+## E6. Observability & Ops
 
 ### US-019 — Tracing & dashboards
 **Acceptance Criteria**
-- Key events (`BookingConfirmed`, `DepositCapturedMock`, `SmsQueuedMock`) appear in App Insights with correlation IDs.
+- Key events (`BookingConfirmed`, `SmsQueuedMock`) appear in App Insights with correlation IDs.
 - Dashboards show p95 latency, error rate, RPS, and booking funnel.
 
 **DoD**

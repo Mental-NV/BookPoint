@@ -3,7 +3,7 @@
 ## Goals
 - Prevent regressions in booking logic (availability, holds, confirm).
 - Ensure admin calendar operations are conflict-safe.
-- Verify deposit & notification mocks behave like real integrations would.
+- Verify notification mocks behave like real integrations would.
 
 ## Test Pyramid (targets)
 - **Unit**: ~70% of total tests; **coverage ≥ 80%** for domain/services.
@@ -22,9 +22,7 @@
 - **Hold service (Redis)**
   - Acquires lock for free slot; rejects existing; TTL expiration.
 - **Booking service**
-  - Confirm with/without deposit; state transitions; idempotency on holdId.
-- **Deposit calculator**
-  - Fixed and percent; rounding rules.
+  - Confirm; state transitions; idempotency on holdId.
 - **Notification composer (mock)**
   - Templates, payload fields.
 - **Validation**
@@ -35,8 +33,7 @@
 ---
 
 ## Integration Tests (WebApplicationFactory)
-- **Public booking flow**: list → availability → hold → confirm (no deposit).
-- **Deposit flow (mock)**: confirm requires deposit → create intent → simulate success → Confirmed.
+- **Public booking flow**: list → availability → hold → confirm.
 - **Admin calendar**: create → conflicting create (409) → reschedule → cancel.
 - **Notifications**: confirmation enqueues Notification; reminder marks as sent.
 
@@ -46,7 +43,6 @@
 
 ## E2E Tests (Playwright or Cypress)
 - **Public happy path**: service→staff→time→contact→confirm; ICS link + mock SMS toast.
-- **Public with deposit**: confirm → mock checkout Approve → success page.
 - **Conflict scenario**: two browsers try same slot; second sees error.
 - **Admin calendar**: Google login (stub), create/move/cancel with visible updates.
 - **Analytics**: seed few bookings, cancel one; dashboard reflects counts.

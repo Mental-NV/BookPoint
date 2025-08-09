@@ -32,12 +32,7 @@ Run:
 docker compose up -d
 ```
 
-Apply schema:
-```bash
-sqlcmd -S 127.0.0.1,1433 -U sa -P Your_strong_password123 -d master -i DB_SCHEMA.sql
-```
-
-> Note: `DB_SCHEMA.sql` is a template for design-time reference only and may be incomplete. Once the backend exists, the authoritative schema will be provided via EF Core migrations. Prefer running migrations over applying this template directly.
+> Note: `DB_SCHEMA.sql` is a placeholder for design-time only and not authoritative. Once the backend exists, use EF Core migrations to create/update the database.
 
 ## Projects
 - `src/Domain` — Entities, value objects, domain services (no external deps)
@@ -65,7 +60,6 @@ Jwt__Issuer=http://localhost
 Jwt__Audience=barber-admin
 Jwt__SigningKey=dev-secret-signing-key-change
 Features__UseMockSms=true
-Features__UseMockPayments=true
 Booking__HoldTtlSeconds=120
 Booking__SlotGridMinutes=15
 ```
