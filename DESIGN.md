@@ -66,7 +66,7 @@ Auth: **Google Sign-In** for back office (admins/staff). Public booking is anony
 - **Scalability:** App Service autoscale; stateless API; Redis for locks/cache.
 - **Performance:** p95 availability < 300ms, calendar < 1.5s; cache hot paths.
 - **Availability:** 99.9% target; multi‑instance API.
-- **Security:** HTTPS; WAF; Google OAuth for admin; tenant isolation by `TenantId`; RBAC.
+- **Security:** HTTPS end-to-end; Google OAuth for admin; tenant isolation by `TenantId`; RBAC.
 - **Reliability:** Idempotent confirms; durable state in SQL.
 - **Observability:** App Insights traces, logs, metrics; dashboards; alerts.
 - **Backups/DR:** Azure SQL PITR; daily logical backups; restore drills.

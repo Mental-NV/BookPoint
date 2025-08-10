@@ -10,19 +10,19 @@ Platform: **Web-only** on **Azure**. Admin auth: **Google** (OIDC). Public flow 
 
 ```
 [ Public SPA ]        [ Admin SPA (Google auth) ]
-        \\             //
-         \\           //
-     Azure Front Door (WAF, TLS, routing)
-                |
-         App Service: API  (ASP.NET Core 8, stateless)
-                |
-         -------------------------------
-         | Azure SQL | Azure Redis | Azure Storage | Azure Functions | App Insights |
-         -------------------------------
+  \                   /
+   \                 /
+      HTTPS (direct; no Front Door in Phase 0)
+        |
+     App Service: API  (ASP.NET Core 8, stateless)
+        |
+     -------------------------------
+     | Azure SQL | Azure Redis | Azure Storage | Azure Functions | App Insights |
+     -------------------------------
 ```
 
 **Key decisions**
-- Single **ASP.NET Core API** for both SPAs. No separate gateway in Phase 0.
+- Single **ASP.NET Core API** for both SPAs. SPAs call the API directly over HTTPS.
 - **Azure SQL** is the system of record; **Redis** used for availability cache & slot locks.
 - **Providers** (SMS) behind interfaces; **mock** implementations in Phase 0.
 - Clean, modular solution with clear **domain boundaries** and **CQRS-light** in the application layer.
@@ -195,7 +195,6 @@ OpenAPI: Generated code-first using Swashbuckle (Swagger). The JSON and Swagger 
 ## 10) Deployment Topology (Azure)
 
 **Resources**
-- **Azure Front Door**: HTTPS termination, WAF, path-based routing to SPAs/API.
 - **App Service – API**: ASP.NET Core, Linux plan, autoscale (min 2).
 - **App Service – WebPublic**: static SPA hosting.
 - **App Service – WebAdmin**: static SPA hosting.
@@ -271,7 +270,7 @@ Feature flags allow seamless switch to real providers later.
 2. **Security checks**: dotnet vulnerable packages; npm audit (warn initially).
 3. **Integration tests**: containerized SQL + Redis on CI.
 4. **Deploy API**: to **staging slot**, run smoke tests, then **swap** to prod.
-5. **Deploy SPAs**: to their App Services (invalidate Front Door cache).
+5. **Deploy SPAs**: to their App Services.
 
 **Migrations**
 - EF Core migrations executed on deploy (guarded); zero-downtime (online migration practices).

@@ -194,7 +194,7 @@ Scope: Public booking, Admin calendar, Mock SMS, Basic analytics, Google auth.
 - JWT access tokens expire and refresh appropriately; logout works.
 
 **DoD**
-- Google JWT auth configured; role claims injected; protected routes enforced; integration tests with test identity.
+- OIDC configured; role claims injected; protected routes enforced; integration tests with test identity.
 
 ### US-011 — Access control & rate limiting
 **Acceptance Criteria**
