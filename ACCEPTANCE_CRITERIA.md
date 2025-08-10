@@ -44,7 +44,7 @@ Scope: Public booking, Admin calendar, Mock SMS, Basic analytics, Google auth.
 
 ### US-002 — View availability
 **Acceptance Criteria**
-- Given branch, service, (optional) staff, and date, the system returns **time slots** aligned to the configured grid.
+- Given branch, service, staff, and date, the system returns **time slots** aligned to the configured grid.
 - Returned slots exclude conflicts (existing appointments + buffers) and out-of-hours.
 - Response time p95 ≤ 300ms with warm cache.
 - Cache invalidates on appointment create/update/cancel.
@@ -76,10 +76,6 @@ Scope: Public booking, Admin calendar, Mock SMS, Basic analytics, Google auth.
 **DoD**
 - API `POST /public/booking/confirm` + `POST /public/booking/verify-phone` (mock) implemented.
 - ICS generation validated; E2E test asserts ICS download exists.
-
----
-
-### (Removed) Deposit-related stories are out of scope for Phase 0.
 
 ---
 
@@ -149,7 +145,7 @@ Scope: Public booking, Admin calendar, Mock SMS, Basic analytics, Google auth.
 - Reminder entries are created at **T-24h** and **T-2h** by a timer job and marked as sent.
 
 **DoD**
-- Azure Functions timer implemented (dev) or background hosted service; tests assert state transitions.
+- Background hosted service with timer implemented; tests assert state transitions.
 
 ---
 
@@ -198,7 +194,7 @@ Scope: Public booking, Admin calendar, Mock SMS, Basic analytics, Google auth.
 - JWT access tokens expire and refresh appropriately; logout works.
 
 **DoD**
-- OIDC configured; role claims injected; protected routes enforced; integration tests with test identity.
+- Google JWT auth configured; role claims injected; protected routes enforced; integration tests with test identity.
 
 ### US-011 — Access control & rate limiting
 **Acceptance Criteria**
