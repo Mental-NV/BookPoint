@@ -15,7 +15,7 @@
 
 ---
 
-## Unit Tests (xUnit + FluentAssertions)
+## Unit Tests (MSTest + FluentAssertions)
 - **Availability service**
   - Working hours & exceptions; buffer enforcement; staff skill gating.
   - Slot grid alignment; overlapping appointments exclusion.
@@ -28,16 +28,16 @@
 - **Validation**
   - DTO validators (FluentValidation).
 
-**Tooling:** xUnit, FluentAssertions, NSubstitute/Moq, Bogus for data.
+**Tooling:** MSTest, FluentAssertions, Moq, Bogus for data.
 
 ---
 
-## Integration Tests (WebApplicationFactory)
+## Integration Tests (WebApplicationFactory + Linux containers)
 - **Public booking flow**: list → availability → hold → confirm.
 - **Admin calendar**: create → conflicting create (409) → reschedule → cancel.
 - **Notifications**: confirmation enqueues Notification; reminder marks as sent.
 
-**Infra:** Testcontainers for SQL Server & Redis; Respawn to clean DB between tests.
+**Infra:** Testcontainers (Linux) for SQL Server & Redis; Respawn for DB isolation between tests. Containers run on Linux images in CI and locally.
 
 ---
 
