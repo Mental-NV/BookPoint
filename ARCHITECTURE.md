@@ -12,12 +12,12 @@ Platform: **Web-only** on **Azure**. Admin auth: **Google** (OIDC). Public flow 
 [ Public SPA ]        [ Admin SPA (Google auth) ]
   \                   /
    \                 /
-      HTTPS (direct; no Front Door in Phase 0)
+      HTTPS (direct calls)
         |
      App Service: API  (ASP.NET Core 8, stateless)
         |
      -------------------------------
-     | Azure SQL | Azure Redis | Azure Storage | Azure Functions | App Insights |
+  | Azure SQL | Azure Redis | Azure Storage | Hosted Services | App Insights |
      -------------------------------
 ```
 
@@ -34,7 +34,7 @@ Platform: **Web-only** on **Azure**. Admin auth: **Google** (OIDC). Public flow 
 - **Frontend**: React + TypeScript, Vite, React Router, React Query, Redux, Tailwind.
 - **Backend**: ASP.NET Core 8 (Controllers), MediatR, EF Core, FluentValidation.
 - **Data**: Azure SQL (General Purpose tier), Azure Cache for Redis (Standard), Azure Storage (Blobs for CSV/ICS).
-- **Jobs**: Azure Functions (timer jobs for reminders & housekeeping).
+- **Jobs**: Background hosted services (IHostedService) for reminders & housekeeping.
 - **Auth**: Google OpenID Connect for Admin. API issues bearer JWT with roles (no cookies).
 - **Observability**: Application Insights + Log Analytics.
 - **CI/CD**: GitHub Actions, deployment slots (blue/green) for API.
@@ -201,7 +201,7 @@ OpenAPI: Generated code-first using Swashbuckle (Swagger). The JSON and Swagger 
 - **Azure SQL Database**: General Purpose, PITR enabled.
 - **Azure Cache for Redis**: Standard/Premium (TLS).
 - **Azure Storage (Blob)**: CSV exports, ICS files.
-- **Azure Functions**: Timer triggers (reminders, lock cleanup).
+- **Hosted background services**: Timer-driven tasks (reminders, lock cleanup) within the API app.
 - **Application Insights**: telemetry for all apps.
 
 **Autoscale (API)**
