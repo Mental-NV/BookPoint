@@ -195,14 +195,14 @@ Scope: Public booking, Admin calendar, Mock SMS, Basic analytics, Google auth.
 **Acceptance Criteria**
 - Admin can sign in via Google and is recognized with the correct **role** (Owner/Manager/Receptionist/Staff).
 - Unauthorized users are denied with 401/403.
-- Session/JWT expires and refreshes appropriately; logout works.
+- JWT access tokens expire and refresh appropriately; logout works.
 
 **DoD**
 - OIDC configured; role claims injected; protected routes enforced; integration tests with test identity.
 
 ### US-011 — Access control & rate limiting
 **Acceptance Criteria**
-- Admin endpoints require valid JWT/session with role authorization.
+- Admin endpoints require valid bearer JWT with role authorization.
 - Public endpoints `/public/*` are throttled; excessive calls return **429** with `Retry-After` header.
 - CORS only allows Admin/Public SPA origins.
 

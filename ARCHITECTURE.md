@@ -35,7 +35,7 @@ Platform: **Web-only** on **Azure**. Admin auth: **Google** (OIDC). Public flow 
 - **Backend**: ASP.NET Core 8 (Controllers), MediatR, EF Core, FluentValidation.
 - **Data**: Azure SQL (General Purpose tier), Azure Cache for Redis (Standard), Azure Storage (Blobs for CSV/ICS).
 - **Jobs**: Azure Functions (timer jobs for reminders & housekeeping).
-- **Auth**: Google OpenID Connect for Admin. JWT/cookie issued by API for session.
+- **Auth**: Google OpenID Connect for Admin. API issues bearer JWT with roles (no cookies).
 - **Observability**: Application Insights + Log Analytics.
 - **CI/CD**: GitHub Actions, deployment slots (blue/green) for API.
 
@@ -162,7 +162,7 @@ Admin (Google auth):
 Mock utility:
 - `POST /mock/sms/send`
 
-Detailed OpenAPI contracts will be produced alongside implementation (code-first generation) and committed when available.
+OpenAPI: Generated code-first using Swashbuckle (Swagger). The JSON and Swagger UI are produced from code and published via CI.
 
 ---
 
@@ -177,13 +177,13 @@ Detailed OpenAPI contracts will be produced alongside implementation (code-first
 - **Views**: Day/Week calendar with DnD (create/move/resize).
 - **Panels**: Appointment details panel (status, notes, mock send reminder).
 - **Management**: Services CRUD, Staff CRUD, Settings, Mock Outbox.
-- **Auth**: Google Sign-In; backend session/JWT; role-based routes.
+- **Auth**: Google Sign-In; bearer JWT (no cookies); role-based routes.
 
 ---
 
 ## 9) Security & Auth
 
-- **Admin** only via **Google OIDC**. API issues JWT/cookie with roles.
+- **Admin** only via **Google OIDC**. API issues bearer JWT with roles (no cookies).
 - **RBAC** roles: Owner, Manager, Receptionist, Staff.
 - **Rate limiting**: IP throttle on `/public/*` + circuit breakers for provider calls.
 - **CORS**: allow Admin/Public SPAs origins only.

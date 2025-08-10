@@ -52,7 +52,7 @@
 ---
 
 ## Performance Tests (lightweight)
-- K6 or Azure Load Testing targeting `/public/availability` @ 100 RPS for 5 min:
+- Azure Load Testing targeting `/public/availability` @ 100 RPS for 5 min:
   - p95 ≤ 300 ms, error rate < 0.5%.
 - Calendar load endpoint @ 30 RPS: p95 ≤ 1.5 s.
 
