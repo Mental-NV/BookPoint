@@ -41,7 +41,7 @@
 
 ---
 
-## E2E Tests (Playwright or Cypress)
+## E2E Tests (Playwright)
 - **Public happy path**: service→staff→time→contact→confirm; ICS link + mock SMS toast.
 - **Conflict scenario**: two browsers try same slot; second sees error.
 - **Admin calendar**: Google login (stub), create/move/cancel with visible updates.

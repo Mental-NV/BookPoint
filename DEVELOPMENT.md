@@ -43,7 +43,7 @@ docker compose up -d
 - `src/WebAdmin` — React SPA (admin)
 - `tests/Unit` — unit tests (Domain/Application)
 - `tests/Integration` — API + Infrastructure integration tests
-- `tests/E2E` — end-to-end tests (Playwright/Cypress)
+- `tests/E2E` — end-to-end tests (Playwright)
 
 ## Environment Variables
 

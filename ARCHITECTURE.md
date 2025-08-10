@@ -55,7 +55,7 @@ Platform: **Web-only** on **Azure**. Admin auth: **Google** (OIDC). Public flow 
 /tests
   /Unit              -- Domain/Application unit tests
   /Integration       -- API + Infrastructure integration tests
-  /E2E               -- Playwright/Cypress end-to-end tests
+  /E2E               -- Playwright end-to-end tests
 ```
 
 **Dependency rules**
