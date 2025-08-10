@@ -98,6 +98,7 @@ Scope: Public booking, Admin calendar, Mock SMS, Basic analytics, Google auth.
 - Day and Week views display appointments by staff, color-coded by status.
 - Initial load (typical week) p95 ≤ 1.5s.
 - Empty, loading, and error states are handled gracefully.
+- Access: Owner, Manager, Receptionist can view all staff; Staff sees only their own schedule.
 
 **DoD**
 - API `GET /admin/calendar` implemented; UI renders virtualized events; performance measured in CI run.
@@ -109,6 +110,7 @@ Scope: Public booking, Admin calendar, Mock SMS, Basic analytics, Google auth.
 - Dragging on a free time range opens a modal to select service/client.
 - On save, appointment is created without double-booking; conflicts return **409**.
 - Staff must have the selected service in their **skills**.
+- Access: Owner, Manager, Receptionist can create for any staff; Staff may create only for self. Others receive **403 Forbidden**.
 
 **DoD**
 - API `POST /admin/appointments` with validation; integration tests for conflicts and skills.
@@ -120,6 +122,7 @@ Scope: Public booking, Admin calendar, Mock SMS, Basic analytics, Google auth.
 - Drag-and-drop move updates the appointment if conflict-free; otherwise shows error.
 - Cancel updates status and frees the slot.
 - Optional optimistic concurrency via ETag prevents overwriting changes from another admin.
+- Access: Owner, Manager, Receptionist can modify any appointment; Staff may modify only their own appointments. Unauthorized attempts return **403**.
 
 **DoD**
 - API `PATCH /admin/appointments/{id}` implemented; tests for reschedule/cancel/hard conflict.
@@ -131,6 +134,9 @@ Scope: Public booking, Admin calendar, Mock SMS, Basic analytics, Google auth.
 **Acceptance Criteria**
 - Admin can **CRUD** services (duration, price) and **CRUD** staff (skills, hours, breaks, vacations).
 - Validation prevents zero/negative durations and invalid configs.
+- Access: Services — Owner/Manager can create/update; Receptionist/Staff read-only (writes return **403**).
+- Access: Staff — Owner/Manager can create/update; Receptionist/Staff read-only (writes return **403**).
+- Access: Clients — Owner/Manager/Receptionist can create/update; Staff read-only (writes return **403**).
 
 **DoD**
 - APIs `/admin/services` and `/admin/staff` implemented; form validations; unit tests for validators.
@@ -169,6 +175,7 @@ Scope: Public booking, Admin calendar, Mock SMS, Basic analytics, Google auth.
   - **Occupancy %** (Booked minutes / Available minutes)
   - **Average lead time (hours)**
 - Results consistent with database facts (±1 during concurrent updates).
+- Access: All admin roles (Owner, Manager, Receptionist, Staff) can view.
 
 **DoD**
 - API `GET /admin/analytics/kpis` implemented; unit tests for calculations; E2E asserts values against seeded fixtures.
@@ -179,6 +186,7 @@ Scope: Public booking, Admin calendar, Mock SMS, Basic analytics, Google auth.
 **Acceptance Criteria**
 - Admin can export appointments to CSV within the selected date range.
 - File opens in Excel; UTF-8 with BOM; includes header row.
+- Access: Only Owner and Manager can export; other roles receive **403**.
 
 **DoD**
 - API `GET /admin/analytics/export` returns `text/csv`; E2E verifies content & encoding.

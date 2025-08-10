@@ -131,3 +131,17 @@ The EF Core migrations are the source of truth. Use them to create and update th
 - **SQL login failed** → ensure SA password meets complexity; add `TrustServerCertificate=True`.
 - **Port conflicts** → change ports in launch configs or docker compose.
 - **Google login** → set OAuth redirect URIs to your local Admin SPA URL.
+
+## Authorization: policies & handlers (Phase 0)
+- Roles: Owner, Manager, Receptionist, Staff; bearer JWT only (no cookies).
+- Tenant: require `X-Tenant-Id`; enforce EF global query filter on `TenantId`.
+- Policies:
+  - `CanManageCatalog`: Owner, Manager
+  - `CanManageStaff`: Owner, Manager
+  - `CanManageAppointments`: Owner, Manager, Receptionist, Staff (self-only)
+  - `CanManageClients`: Owner, Manager, Receptionist
+  - `CanViewAnalytics`: all roles
+  - `CanExportAnalytics`: Owner, Manager
+- Resource handler: `StaffSelfOnlyHandler` ensures Staff can only act on their own appointments.
+- Controller usage: `[Authorize(Policy = "CanManageAppointments")]` + resource-based check for self-only.
+- Testing tips: integration tests for 401/403; seed users with different role claims; verify forbidden writes for restricted roles.
