@@ -1,0 +1,22 @@
+name: ci
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+      - name: Restore
+        run: dotnet restore BookPoint.sln
+      - name: Build
+        run: dotnet build BookPoint.sln --no-restore -c Release
+      - name: Test
+        run: dotnet test BookPoint.sln --no-build -c Release --collect:"XPlat Code Coverage" --logger trx

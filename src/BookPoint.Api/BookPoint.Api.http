@@ -1,0 +1,6 @@
+@BookPoint.Api_HostAddress = http://localhost:5191
+
+GET {{BookPoint.Api_HostAddress}}/health
+Accept: application/json
+
+###
