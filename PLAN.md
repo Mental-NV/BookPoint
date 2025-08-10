@@ -33,51 +33,51 @@
 - CI/CD: GitHub Actions build/test/integration, slot deploy, smokes, swap.
 
 ## deliverable work items (≤2h each)
-1) Solution scaffolding and CI build
+1) P0 — Solution scaffolding and CI build
    - AC: .sln + projects created; build succeeds in CI; basic health endpoint alive.
    - Tests: trivial smoke unit test; CI pipeline runs build/test jobs.
 
-2) EF Core DbContext + initial migration
+2) P0 — EF Core DbContext + initial migration
    - AC: Entities and DbContext defined; migration applied locally; ConnectionStrings via config.
    - Tests: Integration test spins SQL container and applies migration (no errors).
 
-3) Redis adapter and hold lock service
+3) P0 — Redis adapter and hold lock service
    - AC: IHoldLockService with SET NX EX; configurable TTL; idempotent release.
    - Tests: Integration tests verify acquire/reject/expire behavior.
 
-4) Availability computation service
+4) P0 — Availability computation service
    - AC: Generates slots from work patterns, skills, buffers; caches with short TTL.
    - Tests: Unit tests for grid alignment, overlaps, skills; cache hit path.
 
-5) Public endpoints: availability + hold + confirm + cancel
+5) P0 — Public endpoints: availability + hold + confirm + cancel
    - AC: Controllers expose endpoints with ProblemDetails errors; Swagger shows contracts.
    - Tests: Integration tests cover happy path and conflict (409) on second hold/confirm.
 
-6) Mock notifications + hosted reminders
+6) P1 — Mock notifications + hosted reminders
    - AC: Mock sender persists to Notifications, logs events; reminder service flips to sent.
    - Tests: Integration test enqueues confirmation; background service processes to sent.
 
-7) Admin calendar range + appointments PATCH
+7) P1 — Admin calendar range + appointments PATCH
    - AC: Range query returns staff blocks; PATCH updates times with conflict check; optional If-Match.
    - Tests: Integration test for reschedule happy path and conflict.
 
-8) Services/Staff/Clients CRUD (admin)
+8) P1 — Services/Staff/Clients CRUD (admin)
    - AC: CRUD endpoints with validation and RBAC policies.
    - Tests: Unit validator tests; integration CRUD roundtrip.
 
-9) Analytics KPIs + CSV export
+9) P1 — Analytics KPIs + CSV export
    - AC: KPIs endpoint computes basic metrics; export writes CSV to Blob and streams download.
    - Tests: Unit for KPI calc; integration generates CSV with expected headers.
 
-10) WebPublic wizard (happy path)
+10) P1 — WebPublic wizard (happy path)
    - AC: 5-step flow; ICS download; mock SMS toast; error on conflict.
    - Tests: Playwright happy + conflict scenarios.
 
-11) WebAdmin basics: login + calendar DnD
+11) P1 — WebAdmin basics: login + calendar DnD
    - AC: Google auth stub in dev; calendar view with create/move/cancel; role-gated routes.
    - Tests: Playwright admin create/move/cancel.
 
-12) Observability & perf validation
+12) P2 — Observability & perf validation
    - AC: App Insights custom events (BookingHold, BookingConfirmed, SmsQueuedMock, SmsSentMock), dashboards; perf check meets targets.
    - Tests: Optional Azure Load Testing runbook; asserts p95 thresholds in report.
 
