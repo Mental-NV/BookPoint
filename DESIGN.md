@@ -18,7 +18,7 @@ Auth: **Google Sign-In** for back office (admins/staff). Public booking is anony
 - Horizontally **scalable** & observable on Azure.
 
 ### Success Criteria (Phase 0)
-- Users complete UC-001…UC-007 (below) without errors.
+- Users complete the key flows defined in the acceptance criteria without errors.
 - p95 public availability request < **300 ms** (warm cache).
 - p95 admin calendar load < **1.5 s** (week view).
 - Zero-downtime deploys; App Insights dashboards show green KPIs.
@@ -34,42 +34,7 @@ Auth: **Google Sign-In** for back office (admins/staff). Public booking is anony
 
 ---
 
-## 3) Use Cases
-
-1. **UC-001: Client books online**
-   - **Trigger:** Client opens public site.
-   - **Flow:** Select branch → service → (optional) staff → time → contact → confirmation + ICS.
-   - **Post:** Show “(mock) SMS sent”.
-   - **Failure:** Lock timeout → slot released.
-
-2. **UC-002: Client verifies phone (mock)**
-   - **Trigger:** Enter phone during booking.
-   - **Flow:** Click “Send code” → UI shows fake code → user enters code → continue.
-   - **Alt:** Wrong/expired code → retry.
-
-3. **UC-003: Admin creates booking (walk-in/phone)**
-   - **Flow:** Admin DnD on calendar → modal with client + service → save.
-   - **Validations:** Staff skills, time conflicts, buffers.
-
-4. **UC-004: Admin reschedules or cancels**
-   - **Reschedule:** DnD to new time → hard check; notify client (mock SMS).
-   - **Cancel:** Mark canceled → release slot → (mock) notify.
-
-5. **UC-005: Configure catalog/staff/hours**
-   - Services (duration, price).
-   - Staff (skills/hours/breaks/vacations).
-   - Branch hours; booking buffers; last‑minute cutoff.
-
-6. **UC-006: View analytics**
-   - Tiles: appointments, occupancy, cancellations.
-   - Filters: branch, date range; CSV export.
-
-7. **UC-007: Admin/Staff login with Google**
-   - First owner invites others; assign roles.
-
----
-
-## 4) Functional Requirements
+## 3) Functional Requirements
 
 ### Public Booking
 - Browse **branches**, **services**, **staff** (optional filter).
@@ -96,7 +61,7 @@ Auth: **Google Sign-In** for back office (admins/staff). Public booking is anony
 
 ---
 
-## 5) Non-Functional Requirements
+## 4) Non-Functional Requirements
 
 - **Scalability:** App Service autoscale; stateless API; Redis for locks/cache.
 - **Performance:** p95 availability < 300ms, calendar < 1.5s; cache hot paths.
@@ -110,7 +75,7 @@ Auth: **Google Sign-In** for back office (admins/staff). Public booking is anony
 
 ---
 
-## 6) Domain Rules (Phase 0)
+## 5) Domain Rules (Phase 0)
 
 - Appointment time = start to start + service duration (+ optional buffer).
 - Staff must have skill for service.
@@ -120,7 +85,7 @@ Auth: **Google Sign-In** for back office (admins/staff). Public booking is anony
 
 ---
 
-## 7) Data Definitions (key)
+## 6) Data Definitions (key)
 
 - **Services**: `DurationMin`, `BasePrice`.
 - **Staff**: `Skills[]` (service ids), `WorkPattern` (weekly schedule + exceptions).
@@ -129,7 +94,7 @@ Auth: **Google Sign-In** for back office (admins/staff). Public booking is anony
 
 ---
 
-## 8) Testing Strategy (summary)
+## 7) Testing Strategy (summary)
 
 - **Unit:** availability, lock/confirm.
 - **Integration:** booking flow, admin DnD, cancellations.
@@ -139,7 +104,7 @@ Auth: **Google Sign-In** for back office (admins/staff). Public booking is anony
 
 ---
 
-## 9) Milestones
+## 8) Milestones
 
 - **M1 Foundations:** infra + auth + CRUD (tenant/branch/staff/services).
 - **M2 Booking Engine:** availability + holds + public wizard.
