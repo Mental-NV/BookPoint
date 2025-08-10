@@ -11,7 +11,7 @@
 - **DI:** constructor injection; avoid service locator. Prefer **interfaces** on external boundaries (providers).
 - **Logging:** use `ILogger<T>` with structured logs (`LogInformation("Confirmed {AppointmentId}", id)`).
 - **Validation:** FluentValidation for request DTOs; return RFC7807 `ProblemDetails` on errors.
-- **Mapping:** AutoMapper where it reduces noise; otherwise manual maps.
+- **Mapping:** Use explicit/manual mapping. Keep mapping code close to DTOs; consider factory/extension methods for reuse. Avoid runtime mapping libraries.
 - **Data access:** EF Core, `AsNoTracking` for queries; cancellation tokens everywhere.
 - **Date/Time:** store UTC; convert only at UI boundary.
 - **Transactions:** use `IDbContextTransaction` for multi-entity writes; keep short.
