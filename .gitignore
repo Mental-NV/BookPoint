@@ -1,0 +1,89 @@
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Visual Studio / .NET
+.vs/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+*.log
+**/TestResult*/
+TestResults/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+_ReSharper*/
+*.resharper
+*.DotSettings.user
+
+# Rider / JetBrains
+.idea/
+*.iws
+*.iml
+*.ipr
+
+# Build outputs
+**/publish/
+**/Release/
+**/Debug/
+
+# NuGet
+packages/
+*.nupkg
+*.snupkg
+.nuget/packages/
+
+# Coverage
+coverage/
+coverage-*/
+coverage.cobertura.xml
+lcov.info
+
+# Node / SPAs (Vite, React)
+node_modules/
+.pnpm-store/
+.npm/
+.yarn/
+# build outputs
+**/dist/
+**/build/
+# Vite cache
+**/.vite/
+
+# Playwright
+playwright-report/
+playwright/.cache/
+**/test-results/
+
+# Environment files
+.env
+.env.*
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# VS Code (allow common shared files)
+.vscode/*
+!.vscode/extensions.json
+!.vscode/launch.json
+!.vscode/tasks.json
+
+# Misc
+*.tmp
+*.temp
+~$*
+
+# Azure (general)
+# Local settings or publish profiles should not be committed
+**/Properties/PublishProfiles/*.pubxml
+**/Properties/PublishProfiles/*.pubxml.user
+local.settings.json
+
+# npm/pnpm/yarn lockfiles are intentionally tracked (do not ignore)
+# - package-lock.json
+# - pnpm-lock.yaml
+# - yarn.lock
