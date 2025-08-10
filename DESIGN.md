@@ -38,7 +38,7 @@ Auth: **Google Sign-In** for back office (admins/staff). Public booking is anony
 
 ### Public Booking
 - Browse **branches**, **services**, **staff** (optional filter).
-- **Availability** by service/staff/day; 5–15 min grid alignment.
+- **Availability** by service/staff/day; 15 min grid alignment.
 - **Slot hold** on confirm step (TTL 120s) with Redis; release on timeout.
 - **Contact**: name, phone, email (optional); phone verification (mock).
 - Confirmation screen with booking code + **ICS** file; (mock) SMS.
